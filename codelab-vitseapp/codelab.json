@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2022-02-02T20:46:04Z",
+  "id": "codelab-vitseapp",
+  "duration": 0,
+  "title": "En liten vitse-app",
+  "authors": "Sondre Bader Wang",
+  "summary": "I dette oppgavesettet vil du bygge en enkel vitseapp som henter inn data fra ett vitse-api.",
+  "source": "1yZj1Vp4HB0cUgwpEPtymNygHhcrn8k_gz7Q3ZwUTqAA",
+  "theme": "android",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "Android",
+    "Coroutines",
+    "ViewModel",
+    "Arkitektur"
+  ],
+  "tags": [],
+  "feedback": "https://nettskjema.no/a/246604",
+  "url": "codelab-vitseapp"
+}

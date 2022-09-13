@@ -1,0 +1,168 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>En liten vitse-app</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/codelab-elements/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="codelab-vitseapp"
+                  title="En liten vitse-app"
+                  environment="web"
+                  feedback-link="https://nettskjema.no/a/246604">
+    
+      <google-codelab-step label="Før du starter" duration="0">
+        <p>Vi fortsetter å bygge på appen <a href="https://developer.android.com/codelabs/basic-android-kotlin-training-recyclerview-scrollable-list" target="_blank">affirmations</a> som ble laget i codelab-en om recyclerview. Så du burde ha gjort den før du begynner.</p>
+<h2 is-upgraded><strong>Forhåndskunnskaper</strong></h2>
+<ul>
+<li>Grunnleggende kotlin-forståelse</li>
+<li>Lagre og manipulere views i android</li>
+<li>Kjennskap til recyclerview</li>
+</ul>
+<h2 is-upgraded><strong>Hva du vil lære</strong></h2>
+<ul>
+<li>Å hente data fra et web-API ved bruk av et bibliotek</li>
+<li>Litt om <a href="https://kotlinlang.org/docs/coroutines-overview.html#documentation" target="_blank">coroutines</a></li>
+<li>Litt om <a href="https://developer.android.com/jetpack/guide" target="_blank">app-arkitektur</a></li>
+<li>Litt om byggverktøyet <a href="https://gradle.org" target="_blank">gradle</a></li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="En liten intro til app-arkitektur" duration="0">
+        <p>Vi skal nå omstrukturere appen vår litt slik at det vil bli lettere å legge til api-kall. Vi kommer her til å benytte oss av en forenklet versjon av den <a href="https://developer.android.com/jetpack/guide#recommended-app-arch" target="_blank">anbefalte app-arkitekturen</a> til google.</p>
+<ol type="1" start="1">
+<li>Les avsnittet om <a href="https://developer.android.com/jetpack/guide#common-principles" target="_blank">vanlige prinsipper innenfor arkitektur</a> og det om <a href="https://developer.android.com/jetpack/guide#recommended-app-arch" target="_blank">anbefalt app-arkitektur</a></li>
+</ol>
+<p>Det første vi skal gjøre med appen vår er å flytte initialisering av data. I vår forenklede versjon av den <a href="https://developer.android.com/jetpack/guide#recommended-app-arch" target="_blank">anbefalte app-arkitekturen</a> ønsker vi å flytte den ut slik at en subklasse av <a href="https://developer.android.com/topic/libraries/architecture/viewmodel" target="_blank">ViewModel</a> vil håndtere data for oss. Dette er en klasse som er designet for å ta vare på og håndtere data relatert til vårt brukergrensesnitt på en måte som tar hensyn til <a href="https://developer.android.com/guide/components/activities/activity-lifecycle" target="_blank">activity lifecycle</a>. Ved å bruke ViewModel-klassen tillater vi at data overlever konfigurasjonsendringer slik som skjermrotasjoner.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Import av biblioteker" duration="0">
+        <p>For å benytte oss av denne lifecycle-aware klassen må vi importere noen biblioteker. Vi ønsker å legge til noen av bibliotekene slik som beskrevet i <a href="https://developer.android.com/jetpack/androidx/releases/lifecycle#declaring_dependencies" target="_blank">Lifecycle release notes</a>.</p>
+<ul>
+<li> Legg til de som har med ViewModel og Livedata å gjøre i <a href="https://developer.android.com/studio/build" target="_blank">gradle modul-filen</a> din. Vi må også importere <a href="https://developer.android.com/jetpack/androidx/releases/activity" target="_blank">activity-ktx</a>.</li>
+</ul>
+<p><code>build.gradle</code></p>
+<pre><code>dependencies {
+    def lifecycle_version = &#34;2.5.0-alpha01&#34;
+
+    // ViewModel implementation
+    &#34;androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version&#34;
+
+    // LiveData implementation
+    &#34;androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version&#34;
+
+    implementation &#34;androidx.activity:activity-ktx:1.5.0-alpha01&#34;
+}</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Opprette ViewModel-en og legge inn en observator" duration="0">
+        <p><strong>Spesielt relevante dokumentasjonssider (andre kan være relevante):</strong></p>
+<ul>
+<li><a href="https://developer.android.com/topic/libraries/architecture/viewmodel#implement" target="_blank">ViewModel</a></li>
+<li><a href="https://developer.android.com/topic/libraries/architecture/livedata#update_livedata_objects" target="_blank">LiveData</a></li>
+</ul>
+<p><strong>Oppgaven:</strong></p>
+<ol type="1" start="1">
+<li>Lag en ny klasse i prosjektet ditt med navn <code>MainActivityViewModel.kt</code> og la denne klassen være en subklasse av <code>ViewModel</code></li>
+<li>I denne klassen skal du benytte et <a href="https://developer.android.com/topic/libraries/architecture/livedata" target="_blank"><code>Livedata</code></a>-objekt til å ta vare på <code>Affirmation</code>-objekter. Legg også inn en metode for å hente livedata-objektet slik at vi kan opprette observatorer senere.</li>
+</ol>
+<pre><code>private val affirmations: MutableLiveData&lt;List&lt;Affirmation&gt;&gt; by lazy {
+        MutableLiveData&lt;List&lt;Affirmation&gt;&gt;().also {
+            loadAffirmations()
+        }
+    }</code></pre>
+<ol type="1" start="3">
+<li>I Viewmodel lag en egen <code>loadAffirmations()</code>-metode der du skal <a href="https://developer.android.com/topic/libraries/architecture/livedata#update_livedata_objects" target="_blank">oppdatere livedata-objektet</a> med data fra <code>DataSource().loadAffirmations()</code>.</li>
+<li>I <code>MainActivity</code> legg inn linjen <code>private val viewModel: MainActivityViewModel by viewModels()</code> dette er hvordan vi henter vårt viewmodel-objekt.</li>
+<li>I <code>MainActivity</code> sin <code>onCreate</code> metode sett opp en <a href="https://developer.android.com/reference/java/util/Observer" target="_blank">observerer</a> som <a href="https://developer.android.com/topic/libraries/architecture/livedata#observe_livedata_objects" target="_blank">observerer livedata-objektet</a>. Denne observatoren skal sette og opprette en ny adapter til Recyclerviewet med den nye lista. Når livedata-objektet sin verdi endres vil det i denne observatoren bli utført.</li>
+</ol>
+<pre><code>viewModel.getAffirmations().observe(this){ affirmations -&gt;
+   recyclerView.adapter = ItemAdapter(this, affirmations)
+}</code></pre>
+<ol type="1" start="6">
+<li>Test appen og sørg for at den ser lik ut som før du flyttet opprettelsen av data ut i en viewmodel.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="En enkel api-klient" duration="0">
+        <p>Vi skal nå gjøre om vår app til en vitse-app. Altså, vi skal laste ned en liste av vitser fra endepunktet  <a href="https://www.uio.no/studier/emner/matnat/ifi/IN2000/v22/ukesoppgaver/jokes.json" target="_blank">https://www.uio.no/studier/emner/matnat/ifi/IN2000/v22/ukesoppgaver/jokes.json</a> </p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Forberedelser før vi begynner å laste ned" duration="0">
+        <ol type="1" start="1">
+<li>Start med å bli kjent med json-filen du skal benytte.</li>
+<li>Vi starter med å lage en modell som beskriver de elementene vi skal hente. For å enkelt deserialisere objektene til json kan man f.eks. benytte plugin-en <a href="https://plugins.jetbrains.com/plugin/9960-json-to-kotlin-class-jsontokotlinclass-" target="_blank">JSON to Kotlin Class</a>. Velg mappa <code>model</code> og så <code>new -> Kotlin Data Class file from JSON</code>. Gi de noen passende navn (f.eks. Jokes for lista, og Joke for hvert objekt)</li>
+<li>Endre <code>ItemAdapter</code>, <code>MainActivity</code>,  <code>MainActivityViewModel</code> og <code>DataSource</code> til å heller benytte Joke-objekter. For å finne alle steder Affirmation er brukt kan du benytte deg av <a href="https://www.jetbrains.com/help/idea/find-highlight-usages.html" target="_blank"> find usages</a>. Benytt den innebygde <a href="https://www.jetbrains.com/help/idea/refactoring-source-code.html" target="_blank">refactor-funksjonen</a> der det er mulig når du endrer navn og når du ønsker å fjerne Affirmation benytt deg av safe delete (og sørg for at den ikke er benyttet noen steder lenger). Legg inn noen Joke-objekter manuelt i datasource.Kjør appen og se nå at viser vitser istedenfor.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Hent vitser fra API istedenfor lokalt" duration="0">
+        <p>Vi skal hente data fra endepunktet:</p>
+<pre>https://www.uio.no/studier/emner/matnat/ifi/IN2000/v22/ukesoppgaver/jokes.json</pre>
+<p>For å gjøre dette skal vi benytte oss av en HTTP-klient, laste ned dataene til vår vitseapp fra et web-api og <a href="https://kotlinlang.org/docs/serialization.html" target="_blank">deserialisere</a> disse. Det finnes flere mulige biblioteker som kan være kjekke å benytte for dette:</p>
+<ul>
+<li><a href="https://developer.android.com/training/volley" target="_blank">Volley</a></li>
+<li><a href="https://ktor.io/" target="_blank">Ktor</a></li>
+<li><a href="https://github.com/kittinunf/fuel" target="_blank">Fuel</a></li>
+</ul>
+<p>Du kan fint benytte den du selv foretrekker og det som passer dine behov. Men videre i denne vil vi benytte oss av <a href="https://ktor.io/docs/getting-started-ktor-client.html" target="_blank">ktor sin klient</a>.</p>
+<p>Det å laste ned filer fra nett tar tid. Vi kan derfor ikke gjøre dette på UI-tråden. For å hente data i bakgrunnen trenger vi da kjennskap til <a href="https://developer.android.com/kotlin/coroutines" target="_blank">coroutines</a>. Som med mange andre ting må vi <a href="https://developer.android.com/kotlin/coroutines#dependency" target="_blank">importere dette</a> for å benytte oss av det i appen. </p>
+<p>La oss nå starte med å hente fra API:</p>
+<ol type="1" start="1">
+<li>Legg til <a href="https://ktor.io/docs/http-client-multiplatform.html#add-dependencies" target="_blank">avhengigheter for api-biblioteket</a>.For å finne ut av hvilken versjon en del biblioteker er må man ofte inn på <a href="https://github.com/ktorio/ktor/releases" target="_blank">github-prosjektet under releases</a> og finne den nyeste stabile-versjonen.</li>
+</ol>
+<aside class="special"><p><strong>Note:</strong> Dersom du benytter ktor må du importere core, android og <a href="https://ktor.io/docs/json.html#jvm_dependency" target="_blank">en json-serializer</a>. Du kan sette ktor_version med å legge til linja under før importene</p>
+<p><code>def ktor_version = "1.6.7"</code></p>
+</aside>
+<ol type="1" start="2">
+<li>For å kunne koble til nett må du <a href="https://developer.android.com/training/basics/network-ops/connecting" target="_blank">oppdatere manifest-filen.</a></li>
+<li>I <a href="https://developer.android.com/jetpack/guide#recommended-app-arch" target="_blank">den anbefalte arkitekturen</a> står det at ting som å hente fra api burde gjøres i <a href="https://developer.android.com/jetpack/guide#data-layer" target="_blank">datalaget</a>. I vårt tilfelle kan vi ha API-kallene i Datasource-klassen. <a href="https://developer.android.com/jetpack/guide#data-layer" target="_blank">Opprett en klient</a> som kan <a href="https://ktor.io/docs/json.html" target="_blank">deserialisere JSON</a> i dette laget. Det er mange serializer-biblioteker vi kan benytte for dette, men en som er enkel å bruke er <a href="https://ktor.io/docs/json.html#gson" target="_blank">gson</a>. </li>
+<li>I <code>DataSource</code> sin  <code>loadJokes</code>-metode <a href="https://ktor.io/docs/json.html#receive_send_data" target="_blank">hent data</a> fra <a href="https://www.uio.no/studier/emner/matnat/ifi/IN2000/v22/ukesoppgaver/jokes.json" target="_blank">API-et</a> og returner en liste av Joke-objekter fra metoden. Gjør også <code>loadjokes</code> om til en <a href="https://kotlinlang.org/docs/composing-suspending-functions.html" target="_blank">suspend-funksjon</a>. Vi må nå i vår viewmodel kalle på denne funksjonen fra et annet coroutine-scope. Vi ønsker her å benytte <a href="https://developer.android.com/kotlin/coroutines#executing-in-a-background-thread" target="_blank">viewmodelscope og IO-dispatcheren</a> for å kalle på <code>DataSource</code> sin <code>loadJokes</code>-funksjon. I denne funksjonen i viewmodel skal vi oppdatere livedata-objektet.</li>
+</ol>
+<aside class="warning"><p><strong>OBS:</strong> benytt <a href="https://developer.android.com/reference/androidx/lifecycle/MutableLiveData#postValue(T)" target="_blank">postValue(T)</a> om du oppdaterer livedata fra en arbeidstråd annen enn hovedtråden.</p>
+</aside>
+<ol type="1" start="5">
+<li>Test appen din og se at du nå får opp vitser.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/codelab-elements/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/prettify.js"></script>
+  <script src="https://storage.googleapis.com/codelab-elements/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>
